@@ -12,12 +12,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Databricks CLI
-      run: pip install databricks-cli
+    - name: Install Databricks CLI v2
+      run: |
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | bash
+
+    - name: Configure CLI
+      run: |
+        echo "[DEFAULT]" >> ~/.databrickscfg
+        echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
+        echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
+
+    - name: Test Connection
+      run: databricks workspace list /
 
     - name: Deploy notebooks
-      run: |
-        databricks workspace import_dir databricks /Repos/gasstation-ci --overwrite
-      env:
-        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      run: databricks workspace import-dir databricks /Repos/gasstation-ci --overwrite
