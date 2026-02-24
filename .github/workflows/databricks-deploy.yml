@@ -26,4 +26,4 @@ jobs:
       run: databricks workspace list /
 
     - name: Deploy notebooks
-      run: databricks workspace import-dir databricks /Repos/gasstations-ci --overwrite
+      run: databricks workspace import-dir databricks /Shared/gasstations-ci --overwrite
