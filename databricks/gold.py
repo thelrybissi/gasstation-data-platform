@@ -13,4 +13,4 @@ df_gold.write \
     .mode("overwrite") \
     .saveAsTable("gold.bandeira_branca_postos")
 
-print("Gold carregado com sucesso.")
+print("Gold carregado com sucesso!")
