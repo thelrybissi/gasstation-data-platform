@@ -10,20 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
     - name: Install Databricks CLI
-      run: |
-        pip install databricks-cli
+      run: pip install databricks-cli
 
-    - name: Configure Databricks CLI
-      run: |
-        databricks configure --token <<EOF
-        ${{ secrets.DATABRICKS_HOST }}
-        ${{ secrets.DATABRICKS_TOKEN }}
-        EOF
-
-    - name: Deploy notebooks to workspace
+    - name: Deploy notebooks
       run: |
         databricks workspace import_dir databricks /Repos/gasstation-ci --overwrite
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
