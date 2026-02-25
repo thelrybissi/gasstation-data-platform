@@ -17,6 +17,7 @@ raw_path = "abfss://raw@gasstation.dfs.core.windows.net/api_name/"
 
 df_temp = spark.read \
     .option("multiLine", True) \
+    .option("recursiveFileLookup", "true") \
     .json(raw_path)
 
 # ==========================
@@ -37,7 +38,10 @@ df_bronze = df_raw.withColumn("ingestion_timestamp", current_timestamp())
 # 5. CRIAR SCHEMA SE NÃO EXISTIR
 # ==========================
 
-spark.sql("CREATE SCHEMA IF NOT EXISTS bronze")
+spark.sql("""
+CREATE SCHEMA IF NOT EXISTS bronze
+LOCATION 'abfss://raw@gasstations.dfs.core.windows.net/bronze'
+""")
 
 # ==========================
 # 6. SALVAR COMO DELTA
