@@ -5,11 +5,11 @@ from pyspark.sql.functions import current_timestamp, explode
 # ==========================
 
 spark.conf.set(
-  "fs.azure.account.key.gasstation.dfs.core.windows.net",
-  "SUA_STORAGE_KEY_AQUI"
+  "fs.azure.account.key.gasstations.dfs.core.windows.net",
+  storage_key
 )
 
-raw_path = "abfss://raw@gasstation.dfs.core.windows.net/api_name/"
+raw_path = "abfss://raw@gasstations.dfs.core.windows.net/api_name/"
 
 # ==========================
 # 2. LER JSON COMPLETO
@@ -35,21 +35,12 @@ df_raw = df_temp \
 df_bronze = df_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 # ==========================
-# 5. CRIAR SCHEMA SE NÃO EXISTIR
-# ==========================
-
-spark.sql("""
-CREATE SCHEMA IF NOT EXISTS bronze
-LOCATION 'abfss://raw@gasstations.dfs.core.windows.net/bronze'
-""")
-
-# ==========================
 # 6. SALVAR COMO DELTA
 # ==========================
 
 df_bronze.write \
     .format("delta") \
     .mode("append") \
-    .saveAsTable("bronze.gas_station_data")
+    .save("abfss://raw@gasstations.dfs.core.windows.net/bronze/gas_station_data")
 
 print("Bronze carregado com sucesso.")
