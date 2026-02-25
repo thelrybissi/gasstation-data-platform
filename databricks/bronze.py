@@ -4,6 +4,8 @@ from pyspark.sql.functions import current_timestamp, explode
 # 1. CONFIGURAÇÃO STORAGE
 # ==========================
 
+storage_key = "YOU_STORAGE_KEY".strip()
+
 spark.conf.set(
   "fs.azure.account.key.gasstations.dfs.core.windows.net",
   storage_key

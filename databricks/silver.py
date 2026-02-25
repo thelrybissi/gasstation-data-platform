@@ -1,8 +1,19 @@
 from pyspark.sql.functions import col
 
-spark.sql("CREATE SCHEMA IF NOT EXISTS silver")
+storage_key = "YOU_STORAGE_KEY".strip()
 
-df_bronze = spark.table("bronze.gas_station_data")
+# ==========================
+# 1. CONFIGURAÇÃO STORAGE
+# ==========================
+
+spark.conf.set(
+  "fs.azure.account.key.gasstations.dfs.core.windows.net",
+  storage_key
+)
+
+bronze_path = "abfss://raw@gasstations.dfs.core.windows.net/bronze/gas_station_data"
+
+df_bronze = spark.read.format("delta").load(bronze_path)
 
 df_silver = df_bronze.drop(
     "latitude",
@@ -14,7 +25,6 @@ df_silver = df_bronze.drop(
 df_silver.write \
     .format("delta") \
     .mode("overwrite") \
-    .option("overwriteSchema", "true") \
-    .saveAsTable("silver.gas_station_data")
+    .save("abfss://raw@gasstations.dfs.core.windows.net/silver/gas_station_data")
 
 print("Silver carregado com sucesso.")
